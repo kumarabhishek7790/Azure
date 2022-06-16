@@ -10,64 +10,62 @@ terraform {
 
 provider "azurerm" {
   feature {}
-  subscription_id = "a7a291cc-f966-4769-a33b-2fa46cedc33d"
+  subscription_id = "12cd5e08-b3ef-4053-ba46-53858664da44"
   skip_provider_registration = "ture"
 }
 
-resource "azurerm_resource_group" "IVR-VA-STG" {
+resource "azurerm_resource_group" "example" {
   name     = "RGP-VA-NETWORK-IVR-AZ-STAGE"
-  location = var.location
-  tags     = var.tags_customer
+  location = West US
+  tags     = Test
+}
+resource "azurerm_virtual_network" "virtual_network1" {
+  name = "Test-Virtual-Network-1"
+  address_space = "10.10.10.0/24"
+  location = azurerm_resource_group.example.location
+  resource_group_name = azurerm_resource_group.example.name
 }
 
-resource "azurerm_subnet" "subnet-AKS" {
-  name = ""
-  resource_group_name =
-  virtual_network_name =
-  address_prefix = ""
+resource "azurerm_subnet" "subnet-1" {
+  name = "Test-subnet1"
+  resource_group_name = azurerm_resource_group.example.name
+  virtual_network_name = azurerm_virtual_network.virtual_network1.name
+  address_prefix = ["10.10.10.0/28"]
 }
 
-resource "azurerm_NSG" "NSG-IVR-AKS-VA" {
-  name = "NSG-SUB-IVR-AKS-VA-STG"
-  location = azurerm_resource_group.IVR-VA-STG.location
-  resource_group_name = azurerm_resource_group.IVR-VA-STG.name
-  subnet_id = azurerm_subnet.subnet-AKS.id
+resource "azurerm_NSG" "NSG-1" {
+  name = "Network-Security-Group-1"
+  location = azurerm_resource_group.example.location
+  resource_group_name = azurerm_resource_group.example.name
+  subnet_id = azurerm_subnet.subnet-1.id
   security_rule {
-    name = ""
-    priority = ""
-    direction = ""
-    access = ""
-    protocol = ""
-    source_port_range = ""
-    destination_port_range = ""
-    source_address_prefix = ""
-    destination_address_prefix = ""
+    name = "rule1"
+    priority = "200"
+    direction = "Inbound"
+    access = "Allow"
+    protocol = "Tcp"
+    source_port_range = "*"
+    destination_port_range = "22"
+    source_address_prefix = "*"
+    destination_address_prefix = "10.10.10.0/28"
   }  
   tags {
-    LOB = "IVR"
-    environment = "Staging"
+    environment = "Testing"
     }
 }
 
-resource "azurerm_route_table" "Routa_table_IVR-AKS-VA" {
-  name = "RT-SUB-IVR-AKS-VA-STG"
-  location = azurerm_resource_group.IVR-VA-STG.location
-  resource_group_name = azurerm_resource_group.IVR-VA-STG.name
-  subnet_id = azurerm_subnet.subnet-AKS.id
+resource "azurerm_route_table" "RT1" {
+  name = "Test-Route-Table-1"
+  location = azurerm_resource_group.example.location
+  resource_group_name = azurerm_resource_group.example.name
+  subnet_id = azurerm_subnet.subnet-1.id
   route1 {
-    name = ""
-    address_prefix = ""
-    next_hop_type = ""
-    next_hop_in_ip_address = ""
-  }
-  route2 {
-    name = ""
+    name = "Outbound-route-1"
     address_prefix = ""
     next_hop_type = ""
     next_hop_in_ip_address = ""
   }
   tags {
-    LOB = "IVR"
-    environment = "Staging"
+    environment = "Testing"
   }
 }
