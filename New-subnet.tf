@@ -61,9 +61,9 @@ resource "azurerm_route_table" "RT1" {
   subnet_id = azurerm_subnet.subnet-1.id
   route1 {
     name = "Outbound-route-1"
-    address_prefix = ""
-    next_hop_type = ""
-    next_hop_in_ip_address = ""
+    address_prefix = "192.168.0.0/24"
+    next_hop_type = "VnetLocal"
+    # next_hop_in_ip_address = ""
   }
   tags {
     environment = "Testing"
