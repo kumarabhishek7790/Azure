@@ -7,6 +7,14 @@ terraform {
       }
     }
 }
+terraform {
+  backend "azurerm" {
+    resource_group_name  = "temptfstate"
+    storage_account_name = "kumarabhishek7790tfstate"
+    container_name       = "tfstate"
+    key                  = "LMvCJTkg1zYq1h+hryoGsnFK7CYwV/76E9v9gLc4+3VTwPoJ4JLRDEW+YO+A+jQcwAUlTRlw8gZA+AStzpZsGw=="
+  }
+}
 
 provider "azurerm" {
   feature {}
